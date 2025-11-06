@@ -752,17 +752,22 @@ Mismatch between versions requested for Go module {module}:
                 break
 
         if module_path:
-            tool_name = segments[-1]
+            # The target name is always the last segment of the tool path (e.g., "staticcheck", "v2", "gofumpt")
+            target_name = segments[-1]
+
+            # The dictionary key strips version suffixes for user-friendly lookup (e.g., "tool" not "v2")
+            tool_name = target_name
             if len(segments) >= 2 and len(tool_name) >= 2 and tool_name[0] == "v" and tool_name[1:].isdigit():
-                # Skip major version
+                # Skip major version for the dictionary key
                 tool_name = segments[-2]
+
             pkg_path = tool_path[len(module_path):].lstrip("/")
-            # Always use explicit target name format: @repo//pkg:target
-            # When pkg_path is empty (tool at module root), this becomes @repo//:tool_name
-            tool_targets[tool_name] = "@{repo}//{pkg}:{tool}".format(
+            # Always use explicit target syntax: @repo//pkg:target
+            # This works for both subdirectories and module root
+            tool_targets[tool_name] = "@{repo}//{pkg}:{target}".format(
                 repo = importpath_to_repo[module_path],
                 pkg = pkg_path,
-                tool = tool_name,
+                target = target_name,
             )
 
     # Create a synthetic WORKSPACE file that lists all Go repositories created
