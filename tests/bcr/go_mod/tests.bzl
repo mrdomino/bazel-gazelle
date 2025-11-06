@@ -78,6 +78,12 @@ def starlark_tests(name):
     if GO_TOOLS["staticcheck"] != Label("@co_honnef_go_tools//cmd/staticcheck"):
         fail("Unexpected value for 'staticcheck': {}".format(GO_TOOLS["staticcheck"]))
 
+    # Test case for tools at module root (e.g., mvdan.cc/gofumpt)
+    if "gofumpt" not in GO_TOOLS:
+        fail("Expected 'gofumpt' in 'GO_TOOLS'")
+    if GO_TOOLS["gofumpt"] != Label("@cc_mvdan_gofumpt//:gofumpt"):
+        fail("Unexpected value for 'gofumpt': {}".format(GO_TOOLS["gofumpt"]))
+
     test_suite(
         name = name,
         tests = [
