@@ -75,7 +75,7 @@ _PackageInfoSubjectFactory = struct(
 def starlark_tests(name):
     if "staticcheck" not in GO_TOOLS:
         fail("Expected 'staticcheck' in 'GO_TOOLS'")
-    if GO_TOOLS["staticcheck"] != Label("@co_honnef_go_tools//cmd/staticcheck"):
+    if GO_TOOLS["staticcheck"] != Label("@co_honnef_go_tools//cmd/staticcheck:staticcheck"):
         fail("Unexpected value for 'staticcheck': {}".format(GO_TOOLS["staticcheck"]))
 
     # Test case for tools at module root (e.g., mvdan.cc/gofumpt)

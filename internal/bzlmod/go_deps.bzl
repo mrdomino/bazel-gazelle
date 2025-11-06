@@ -757,18 +757,13 @@ Mismatch between versions requested for Go module {module}:
                 # Skip major version
                 tool_name = segments[-2]
             pkg_path = tool_path[len(module_path):].lstrip("/")
-            if pkg_path:
-                tool_targets[tool_name] = "@{repo}//{pkg}".format(
-                    repo = importpath_to_repo[module_path],
-                    pkg = pkg_path,
-                )
-            else:
-                # When tool is at module root (e.g., mvdan.cc/gofumpt),
-                # the target should be @repo//:tool_name
-                tool_targets[tool_name] = "@{repo}//:{tool}".format(
-                    repo = importpath_to_repo[module_path],
-                    tool = tool_name,
-                )
+            # Always use explicit target name format: @repo//pkg:target
+            # When pkg_path is empty (tool at module root), this becomes @repo//:tool_name
+            tool_targets[tool_name] = "@{repo}//{pkg}:{tool}".format(
+                repo = importpath_to_repo[module_path],
+                pkg = pkg_path,
+                tool = tool_name,
+            )
 
     # Create a synthetic WORKSPACE file that lists all Go repositories created
     # above and contains all the information required by Gazelle's -repo_config
